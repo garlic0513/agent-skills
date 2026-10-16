@@ -1,6 +1,6 @@
 # Agent Skills · 通用方法论集
 
-> 两个关于「**怎么想**」和「**怎么学**」的通用方法论 —— 不依赖任何特定行业，可直接迁移到任何新领域。
+> 四个关于「**怎么想**」「**怎么学**」「**怎么问**」「**怎么记**」的通用方法论 —— 不依赖特定行业，可直接迁移到任何新领域。
 
 ---
 
@@ -35,19 +35,55 @@
 - 6 条方法 + 能力诊断表（五问自测）+ 反馈话术模板 + 实践日志（日/周/月三层）
 - 📂 [`practice-knowledge-feedback/`](./practice-knowledge-feedback/)
 
+### 3. 需求调研四维记录法 · Research 4D Method
+
+> **把对方口头说的需求，翻译成可执行的需求，并标出还没定的部分。**
+
+面向**需求调研**的记录框架，四维按固定顺序推进：
+
+```
+现状 AS-IS → 目标 TO-BE → 差异 GAP → 待确认 OPEN
+（现在怎么干） （想怎么干）  （能不能干） （还缺什么·谁定）
+```
+
+- ⭐ 每个维度配「追问清单」——现场照着问，问出真话
+- ⭐ 差异必须三选一：能（标准）/ 部分（需配置）/ 不能（需定制）——报价与工期依据
+- ⭐ 待确认必须带责任人和期限
+- 会后自动出三张清单：需求清单 / 选项清单 / 风险清单
+- 📂 [`research-4d-method/`](./research-4d-method/)
+
+### 4. 会议纪要写法 · Meeting Minutes That Work
+
+> **纪要的目的不是「记录」，而是【决策留痕 + 行动落地 + 事后可查】。**
+
+关于**会议如何变成凭证**的方法。一份纪要写得漂亮不重要，**可执行 + 可追溯**才重要。
+
+- ⭐ 6 条质量标准：议题必有结论 / 待办必有责任人期限 / 区分事实观点决策待办 / 保留关键原话 / 24h 内确认 / 可追溯
+- 「四不写」清单 + 8 段结构（议题→决议→行动→待确认→附件→下次安排）
+- 会前 10 分钟准备 / 会中边听边填 / 会后当天闭环
+- 📂 [`research-meeting-minutes/`](./research-meeting-minutes/)
+
 ---
 
-## 🧭 两个技能的关系
+## 🧭 四个技能的关系
 
 ```
-认知框架法      →  解决「面对陌生领域，我不知道该问什么」
-实践·知识·反馈  →  解决「知道了怎么问之后，我怎么真正学会」
-
-前者是【入场券】：让你看见自己的盲区、提出有效问题
-后者是【发动机】：让你把问题和答案转化成持续增长的能力
+认知框架法        →  想：面对陌生领域，我该怎么看见自己的盲区、提出有效问题
+实践·知识·反馈    →  学：知道了怎么问之后，我怎么真正学会
+需求调研四维法    →  问：见到人之后，我怎么把「他说的」变成「要做的」
+会议纪要写法      →  记：谈完之后，我怎么把「讨论」变成「可追溯的凭证」
 ```
 
-两者互为前后端，可组合使用。
+**串起来是一条完整链路：**
+
+```
+先看见自己的盲区（认知）
+   → 建立学习闭环（实践·反馈）
+      → 到现场把需求问清楚、记准确（四维）
+         → 把结论固化成可追溯的凭证（纪要）
+```
+
+任一环缺失都会漏：只学不问 → 学不到真需求；只问不记 → 结论留不下来；只记不学 → 同一个坑反复踩。
 
 ---
 
@@ -57,53 +93,49 @@
 agent-skills/
 ├── LICENSE                                 MIT
 ├── README.md                               本文件（技能总览）
-├── cognition-framework-method/
-│   ├── README.md                           技能说明（作品集风格）
-│   ├── SKILL.md                            技能主体
+├── cognition-framework-method/             ① 认知框架法
+│   ├── README.md
+│   └── SKILL.md
+├── practice-knowledge-feedback/            ② 实践·知识·反馈
+│   ├── README.md
+│   └── SKILL.md
+├── research-4d-method/                     ③ 需求调研四维记录法
+│   ├── README.md
+│   ├── SKILL.md
 │   └── templates/
-│       └── cognition-framework-card.md     框架卡模板
-└── practice-knowledge-feedback/
-    ├── README.md                           技能说明（作品集风格）
-    ├── SKILL.md                            技能主体（12 节）
+│       └── research-4d-table.md
+└── research-meeting-minutes/               ④ 会议纪要写法
+    ├── README.md
+    ├── SKILL.md
     └── templates/
-        └── practice-log.md                 实践日志模板（日/周/月）
+        └── meeting-minutes.md
 ```
 
 ---
 
-## 🚀 使用方式
+## 🔧 使用方式
 
-### 作为 AI Agent Skill 安装
+每个技能目录下都有 `SKILL.md`（方法论全文）与 `README.md`（速览）。把技能目录复制到你所用 agent 的技能目录即可：
 
-```bash
-git clone https://github.com/garlic0513/agent-skills.git
-
-# 复制某个技能到你的 Hermes / Agent Skills 目录
-cp -r agent-skills/practice-knowledge-feedback ~/.hermes/skills/productivity/
-cp -r agent-skills/cognition-framework-method   ~/.hermes/skills/productivity/
+```
+Hermes:       ~/.hermes/skills/
+Claude Code:  ~/.claude/skills/
 ```
 
-### 作为方法论直接使用（无需 AI）
-
-每个技能的 `README.md` 都可以独立阅读；`SKILL.md` 内含完整可执行流程。
+格式对齐 [Agent Skills 规范](https://agentskills.io/specification)：`name` + `description` frontmatter，Markdown 正文。
 
 ---
 
-## 🎯 适用人群
+## 🎯 适用范围
 
-```
-· 正在跨入陌生领域的人（转行 / 新岗位 / 新学科）
-· 带新人的师傅、导师、管理者
-· 对「学习方法本身」感兴趣的人
-· 想让自己的经验可沉淀、可传递的人
-```
+四个方法都**不依赖特定行业**——软件开发、制造、医药、咨询、科研均适用。文中出现的行业示例仅为说明用途，方法论本身是通用的。
 
 ---
 
 ## 📄 许可
 
-MIT License —— 可自由使用、修改、分发。
+MIT License —— 自由使用、修改、分发。
 
 ---
 
-> **愿每个面对陌生领域的人，都能更快看清路、更稳地走下去。**
+> **方法论的价值不在「知道」，而在「用了之后少走的那几步」。**
