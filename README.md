@@ -1,6 +1,7 @@
-# Agent Skills · 通用方法论集
+# Agent Skills · 通用方法论与工具集
 
 > 六个关于「**怎么想**」「**怎么学**」「**怎么画**」「**怎么问**」「**怎么记**」「**怎么落**」的通用方法论 —— 不依赖特定行业，可直接迁移到任何新领域。
+> 外加一个把方法论**真正落成可交付物**的执行工具。
 
 ---
 
@@ -98,9 +99,33 @@
 - 自查清单（9 项）+ 7 个常见错误 + 填满的示例
 - 📂 [`work-element-card/`](./work-element-card/)
 
+### 7. Drawio 流程图生成与验收 · drawio-flowchart-authoring（执行工具）
+
+> **流程图不是画出来的，是「定义数据 → 生成 → 几何校验 → 真渲染 → 打分」出来的。**
+
+把上面第 3 条（全分支流程图工作法）**真正落成可交付文件**的工具技能。解决手工画图的三类硬问题：
+
+```bash
+# 1) 写成数据（泳道 / 节点 / 连线）→ 一条命令出图
+python3 scripts/drawio_swimlane.py spec.json out.drawio
+
+# 2) 几何体检（穿框 / 压线 / 交叉 / 折点）
+python3 scripts/check_lines_per_page.py out.drawio
+
+# 3) 真渲染自查（服务器无 GUI 也能看成品）
+python3 scripts/make_drawio_preview.py out.drawio
+```
+
+- **治"线太乱/穿框"**：四种布局策略 + 走廊路由铁律（水平走全局行间隙、垂直走泳道走廊）+ 几何校验脚本
+- **治"节点太多看不清"**：全展开单页自适应公式（节点数→行距→字号的数学关系），实测可读上限 ≈ 34 节点/页
+- **治"编号乱飞"**：编号规则（步长统一 / 连续无断号 / 顺序不倒挂 / 插节点用中间号）
+- **治"不知道画得好不好"**：⭐ **质量五维打分卡**（正确性 / 完整性 / 可读性 / 规范性 / 可维护性，8 分才可交付）+ 12 条快速自检 + 12 条高频缺陷库
+- **治"别人发的 .eddx 打不开"**：`.eddx = ZIP` 解包提取文字与泳道几何
+- 📂 [`drawio-flowchart-authoring/`](./drawio-flowchart-authoring/)
+
 ---
 
-## 🧭 六个技能的关系
+## 🧭 七个技能的关系
 
 ```
 认知框架法          →  想：面对陌生领域，我该怎么看见自己的盲区、提出有效问题
@@ -109,6 +134,7 @@
 需求调研四维记录法  →  问：见到人之后，我怎么把"他说的"变成"要做的"
 会议纪要写法        →  记：谈完之后，我怎么把"讨论"变成"可追溯的凭证"
 作业要素卡          →  落：定下来之后，我怎么把"一个节点"落成岗位能照着做的作业卡
+drawio 画图工具     →  做：上面"画"和"落"的结论，怎么变成一张能评审、能交付的图
 ```
 
 **串起来是一条完整链路：**
@@ -120,9 +146,10 @@
          → 到现场把需求问清楚、记准确（四维）
             → 把结论固化成可追溯的凭证（纪要）
                → 把定稿的每一步落到岗位作业（作业要素卡）
+                  → 全部落成可交付、可打分验收的图（drawio 工具）
 ```
 
-任一环缺失都会漏：只学不问 → 学不到真需求；只问不画 → 讨论没有落点；只画不记 → 结论留不下来；只记不落 → 文档很漂亮但没人照着做。
+任一环缺失都会漏：只学不问 → 学不到真需求；只问不画 → 讨论没有落点；只画不记 → 结论留不下来；只记不落 → 文档很漂亮但没人照着做；只落不定稿 → 图很漂亮但没人认。
 
 **交叉引用表：**
 
@@ -134,6 +161,8 @@
 | 全分支图「剪掉的分支」 | → 纪要留痕：「某人确认不需要 XX」 |
 | 流程图的每个节点 | → 作业要素卡（九要素） |
 | 作业要素卡的「异常情况」 | → 流程图新增的异常分支（反向反馈） |
+| 全分支图的分支与布局 | → drawio 工具的「布局策略 / 编号规则」 |
+| drawio 的「质量五维打分」 | → 交付前的合格判定（8 分以上） |
 
 ---
 
@@ -169,11 +198,34 @@ agent-skills/
 │   ├── SKILL.md
 │   └── templates/
 │       └── meeting-minutes.md
-└── work-element-card/                      ⑥ 作业要素卡（九要素）
+├── work-element-card/                      ⑥ 作业要素卡（九要素）
+│   ├── README.md
+│   ├── SKILL.md
+│   └── templates/
+│       └── work-element-card.md
+└── drawio-flowchart-authoring/             ⑦ drawio 流程图生成与验收（执行工具）
     ├── README.md
     ├── SKILL.md
-    └── templates/
-        └── work-element-card.md
+    ├── references/                         9 篇专题
+    │   ├── quality-scorecard.md            质量五维打分卡
+    │   ├── flowchart-layout-strategies.md  布局四选一实测
+    │   ├── expanded-flow-single-page.md    全展开单页自适应
+    │   ├── programmatic-page-build.md      程序化建页纪律
+    │   ├── drawio-real-render-verification.md  服务器真渲染自查
+    │   ├── drawio-consistency-audit.md     接手别人的图：体检→修复
+    │   ├── eddx-geometry-parsing.md        .eddx 几何解析
+    │   ├── process-description-template.md 流程说明写法
+    │   └── drawio-mcp-live-connection.md   接成 MCP 直改屏幕上的图
+    └── scripts/                            9 个可执行脚本
+        ├── drawio_swimlane.py              泳道图生成器
+        ├── check_line_overlap.py           穿框/重合/出口校验
+        ├── check_lines_per_page.py         交叉/折点/线长体检
+        ├── parse_drawio.py                 解析 .drawio
+        ├── parse_eddx_geometry.py          解析 .eddx 几何
+        ├── make_drawio_preview.py          真渲染预览
+        ├── drawio_multipage.py             多页合并 + 跳转
+        ├── verify_drawio_multipage.py      多页验证
+        └── template_style_diff.py          样式逐项 diff
 ```
 
 ---
@@ -193,7 +245,9 @@ Claude Code:  ~/.claude/skills/
 
 ## 🎯 适用范围
 
-六个方法都**不依赖特定行业**——软件开发、制造、医药、咨询、科研均适用。文中出现的行业示例仅为说明用途，方法论本身是通用的。
+前六个方法都**不依赖特定行业**——软件开发、制造、医药、咨询、科研均适用。文中出现的行业示例仅为说明用途，方法论本身是通用的。
+
+第七个是**执行工具**，需要 `python3`；其中「真渲染自查」一步需要一个浏览器（headless 即可），其余步骤纯命令行。
 
 ---
 

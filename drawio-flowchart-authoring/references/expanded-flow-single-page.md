@@ -1,0 +1,105 @@
+# 全展开版流程图 · 单页 A3 自适应引擎（方案C）
+
+> 场景：用户要求「先不考虑子流程，把每条流程的全部节点画出来，一页能看完」。
+> 实测日期 2026-10-23（某 WMS 入库项目 7 条流程）；本文件给公式、阈值、代码骨架与三个跟随调整。
+
+## 1. 为什么需要自适应
+
+展开后单条流程 30–45 个节点。A3 横向（drawio 点单位 1654×1169）在默认行距（76）下只放得下 ~14 行。
+方案对比（当时给用户三选一，他选了 C）：
+
+| 方案 | 做法 | 代价 |
+|---|---|---|
+| A | 一条流程拆 2 张 A3（按作业段切） | 逻辑跨两张图，但字号正常 |
+| B | 一页拉高到 A3 的 2 倍（1654×2200+） | 一页看完，但要拼打印 |
+| **C** ⭐ | **缩字号/行距硬塞进一张 A3** | 7.5–8pt，打印偏小；分支多时线更绕 |
+
+⭐ 选 C 的正确姿势：**把「节点数 → 实际字号」先报给用户再动手**，让他知道代价。
+
+## 2. 公式（直接抄）
+
+```python
+W, H = 1654, 1169                 # A3 横向
+top, bottom = 118, 26             # 顶部标题/泳道标题占位、底部留白
+avail = H - top - bottom          # 1025
+max_row = max(n.row for n in nodes)
+
+pitch   = min(46, avail / (max_row + 1))         # 行距（行中心距）
+node_h  = max(26, pitch - 6)                     # 矩形高
+dia_h   = max(30, pitch - 2)                     # 菱形高（压扁，别撑破行距）
+node_w  = min(150, lane_w - 60)
+dia_w   = min(132, lane_w - 70)
+fs      = round(min(10, max(7.5, pitch * 0.24)), 1)   # 7.5 是可用下限
+```
+
+实测：
+
+| 节点数 | max_row | pitch | node_h | 字号 | 可用性 |
+|:-:|:-:|:-:|:-:|:-:|---|
+| 35 | 30 | 33.1 | 27.1 | 7.9 | 可读 |
+| 38 | 32 | 31.1 | 26.0 | 7.5 | 极限 |
+| ≥40 | — | <30 | <25 | <7.5 | ❌ 拆两页 |
+
+**阈值：≥36 个节点 → 建议拆两张 A3**（按作业段切，例：①收货与复核段 ②检验放行与上架段），
+每张 12–16 步，字号回到 10–12pt。
+
+## 3. 泳道与画布
+
+```python
+lane_w = int((W - 120) / len(lanes))     # 5 条泳道 → 306；4 条 → 383
+frame_w = 60 + len(lanes) * lane_w + 30
+frame_h = top + (max_row + 1) * pitch + bottom - 40
+```
+
+- 泳道**纵向列**、标题条 `startSize=20`、`fillColor=#DAE8FC` + `swimlaneFillColor=#FFFFFF`
+- 外框 `startSize=26`、标题横排（**不要 `horizontal=0`**，否则标题竖排跑到左侧）
+- 节点 `parent="1"`（绝对坐标），比"相对泳道坐标"好算，也不会被泳道裁剪
+
+## 4. 三个必须的跟随调整（紧凑布局专属）
+
+```python
+# ① 系统小标签贴右侧外侧（行距 ≤40 时贴右上角必压字）
+mxGeometry(x + w + 2, y + (pitch - 13) / 2, width=26, height=13)   # fontSize 6.5
+
+# ② 结束/拒收节点放回泳道内（下一行），不要放泳道区外的右侧
+#    放外面 = 一条横线横穿全部泳道，视觉立刻崩
+("e_rej", lane=0, row=9, "结束（拒收）", "end")
+
+# ③ 长文案优先改写，不要继续缩字号
+"85 超收短收处置（采购确认）"  →  "85 超收短收处置（采购）"
+```
+
+## 5. 边与标签
+
+```python
+style = ('edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1;strokeColor=#333333;'
+         'endArrow=block;endFill=1;fontSize=7.5;labelBackgroundColor=#FFFFFF;')
+# 不给 <Array as="points">：让引擎正交自动路由，紧凑布局下自算航点必穿框
+```
+
+标签用 `labelBackgroundColor=#FFFFFF` + 短文案（`是` / `否` / `否·退回录入`），
+长标签会横跨泳道压住节点。
+
+## 6. 复查清单（渲染后肉眼，不看 XML）
+
+```
+□ 每条泳道标题完整（新泳道尤其：fontSize 过大 + 列宽窄 → 标题被裁，如"仓储部（复核员"缺字）
+□ 节点文字没有被系统小标签压住
+□ 判定菱形里的文字有没有溢出（宽度只有矩形的 2/3，长条件句要拆字）
+□ 有没有横穿 3 条以上泳道的单根长线（有 → 把目标节点挪到更靠近源的泳道/行）
+□ 底部是否有大片空白（泳道高裁到内容底 + 80 即可）
+□ 回退线（复核不通过→退回录入）是否绕得太远（紧凑版可接受，但要能一眼跟住）
+```
+
+## 7. 配套生成器（本机）
+
+`<工作目录> —— `build(name, lanes, nodes, edges, lane_w=None, top=118)`：
+- nodes = `[(id, lane_idx, row, text, kind, tag)]`
+- kind ∈ `start / end / manual(白) / auto(蓝) / offline(灰) / sd(蓝菱形) / md(灰菱形)`
+- lane_idx = -1 表示放在泳道区外右侧（⚠️ 只用于短承接节点，结束节点不要用）
+- 返回 `(cells_xml, meta)`，meta 含 pitch/node_h/fs 供汇报
+- 业务数据脚本示例：`/tmp/gen_p1_full.py`（原材料·35 节点）、`/tmp/gen_p2_full.py`（中间体·38 节点）
+
+渲染验收：`.drawio → _preview/*.html → chromium headless 截图`
+（`--force-device-scale-factor=2` + `--window-size=1674,1189`），见
+`references/drawio-real-render-verification.md`。
