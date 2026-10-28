@@ -1,0 +1,5 @@
+id: "T6"
+name: 负样本（不该触发画图）
+inputs:
+  prompt: "公司出差住宿标准是多少？"
+grader: "不产生 .drawio 且答出 350"

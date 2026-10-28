@@ -1,0 +1,5 @@
+id: "T4"
+name: 判定与分支标签
+inputs:
+  prompt: "含判断分支，菱形 + 出边标 是/否。"
+grader: "有 rhombus 且 edge 标签含 是 和 否"

@@ -61,7 +61,7 @@ TXT ='text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#33333
 ```
 
 ```python
-new = ET.SubElement(root,'diagram',{'id':'xxx-page','name':'××子流程'})
+new = ET.SubElement(root,'diagram',{'id':'xxx-page','name':'××子流程 某制药客户'})
 m   = ET.SubElement(new,'mxGraphModel',{...grid/page/pageWidth…})
 rEl = ET.SubElement(m,'root')
 ET.SubElement(rEl,'mxCell',{'id':'0'}); ET.SubElement(rEl,'mxCell',{'id':'1','parent':'0'})

@@ -1,0 +1,48 @@
+name: "garlic-drawio-flowchart-authoring-eval"
+scenario: "flowchart-skill-landing-quality"
+description: "评测流程图技能的落地质量：出图能力、编号规则、泳道职责分离、判定分支、修图能力、负样本（不该触发）。grader 沿用 waza 的 file must_exist / content_patterns 思路，执行器改为 Hermes（waza 仅支持 copilot-sdk）。"
+schemaVersion: "2.0"
+version: "1.0"
+config:
+  trials_per_task: 1
+  timeout_seconds: 420
+  parallel: false
+  executor: hermes-cli
+  runner: evals/runner.py
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.83
+graders:
+  - type: file
+    name: out-diagram-exists
+    config:
+      must_exist: [out.drawio]
+      content_patterns:
+        - path: out.drawio
+          must_match: ["<mxfile", "<diagram"]
+  - type: file
+    name: numbering-contiguous
+    config:
+      # 由 runner.py 实现：按图上 y 顺序抽 ^(\d+)，必须严格等差
+      note: "10,20,30… 连续；起止不编号"
+  - type: file
+    name: swimlanes-role-separated
+    config:
+      note: "泳道 ≥2，且执行岗/复核岗分开"
+  - type: file
+    name: decision-with-labels
+    config:
+      note: "≥1 个 rhombus，且出边标签含 是/否"
+  - type: custom
+    name: geometry-no-crossing
+    config:
+      script: scripts/check_lines_per_page.py
+      note: "穿框必须为 0"
+tasks:
+  - "tasks/T1.yaml"
+  - "tasks/T2.yaml"
+  - "tasks/T3.yaml"
+  - "tasks/T4.yaml"
+  - "tasks/T5.yaml"
+  - "tasks/T6.yaml"

@@ -23,7 +23,7 @@ drawio-mcp-server（war 要国内镜像 `ghfast.top`），装完 war 会自动�
 **第 1 步 · 生成预览页**（别手写，用脚本）
 
 ```bash
-python3 ~/.hermes/skills/productivity/drawio-flowchart-authoring/scripts/make_drawio_preview.py \
+python3 ~/.hermes/skills/productivity/garlic-drawio-flowchart-authoring/scripts/make_drawio_preview.py \
         "路径/图.drawio"            # 默认输出到 webapp/_preview/pN.html
 ```
 

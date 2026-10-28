@@ -1,0 +1,5 @@
+id: "T5"
+name: 修图（编号+断链）
+inputs:
+  prompt: "修复 fixtures/broken.drawio 的编号与悬空连线，另存 out.drawio。"
+grader: "编号连续 + 无 source/target 指向不存在 id 的边"
